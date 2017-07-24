@@ -1,0 +1,6 @@
+platform:ios,'8.0'
+use_frameworks!
+target 'SYRealmModel' do
+pod 'Realm', '~> 2.8.3'
+end
+

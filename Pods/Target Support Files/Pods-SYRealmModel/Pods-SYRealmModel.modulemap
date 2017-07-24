@@ -1,0 +1,6 @@
+framework module Pods_SYRealmModel {
+  umbrella header "Pods-SYRealmModel-umbrella.h"
+
+  export *
+  module * { export * }
+}
