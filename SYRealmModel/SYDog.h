@@ -12,8 +12,15 @@
 @property NSString * name;
 @property NSString * owner;
 @property NSInteger sex;
+@property NSString * colorStr;
 @end
 RLM_ARRAY_TYPE(SYDog)
+
+@interface SYClass : RLMObject
+@property NSString * className;
+@property NSString * classNumber;
+@end
+RLM_ARRAY_TYPE(SYClass)
 
 @interface SYPreson : RLMObject
 @property NSString * name;
@@ -21,4 +28,6 @@ RLM_ARRAY_TYPE(SYDog)
 @property NSString * adress;
 @property BOOL isMan;
 @property RLMArray<SYDog> * dogs;
+@property RLMArray<SYClass> * classs;
 @end
+

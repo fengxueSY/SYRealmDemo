@@ -14,6 +14,12 @@
 
 @end
 
+@implementation SYClass
+
+
+
+@end
+
 @implementation SYPreson
 
 

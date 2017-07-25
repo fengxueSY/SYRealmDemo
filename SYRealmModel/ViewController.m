@@ -18,6 +18,7 @@
 @property (weak, nonatomic) IBOutlet UITextField *textFiled;
 
 @property (nonatomic,copy) NSArray * palceArray;
+@property (nonatomic,copy) NSArray * colorArray;
 @end
 
 @implementation ViewController
@@ -25,13 +26,14 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.palceArray = @[@"中国",@"汉朝",@"明朝",@"魏国",@"蜀国",@"夏朝",@"秦朝",@"商朝",@"东晋",@"隋朝",@"唐朝"];
+    self.colorArray = @[@"赤",@"橙",@"黄",@"绿",@"青",@"蓝",@"紫"];
     [self.searchButton addTarget:self action:@selector(searchButtonAction) forControlEvents:UIControlEventTouchUpInside];
     [self.deleageButton addTarget:self action:@selector(deleageButtonAction) forControlEvents:UIControlEventTouchUpInside];
     [self.changeButton addTarget:self action:@selector(changeButtonAction) forControlEvents:UIControlEventTouchUpInside];
     [self.addButton addTarget:self action:@selector(addDataRealm) forControlEvents:UIControlEventTouchUpInside];
     
-    //首先清除一次数据库，方便测试，如果是正式环境不可以执行该操作
-    [self cleanRealm];
+//    //首先清除一次数据库，方便测试，如果是正式环境不可以执行该操作
+//    [self cleanRealm];
     
     //添加数据库
     [self addDataRealm];
@@ -99,6 +101,8 @@
         dog.name = [NSString stringWithFormat:@"dog_%u",arc4random()%10];
         dog.owner = [NSString stringWithFormat:@"%d",i];
         dog.sex = arc4random()%2;
+        NSInteger cun = self.colorArray.count;
+        dog.colorStr = self.colorArray[arc4random()%cun];
         //默认数据库路径以及名字
         /*
         RLMRealm *realm = [RLMRealm defaultRealm];
@@ -133,16 +137,16 @@
             dog.name = [NSString stringWithFormat:@"dog_%u",arc4random()%10];
             dog.owner = [NSString stringWithFormat:@"%d",i];
             dog.sex = arc4random()%2;
+            NSInteger cun = self.colorArray.count;
+            dog.colorStr = self.colorArray[arc4random()%cun];
             [presen.dogs addObject:dog];
         }
-        //默认数据库路径
-        /*
-        RLMRealm * realm = [RLMRealm defaultRealm];
-        [realm transactionWithBlock:^{
-            [realm addObject:presen];
-        }];
-        */
-        
+        SYClass * clas = [[SYClass alloc]init];
+        NSInteger year = arc4random()%8;
+        NSInteger ca = arc4random()%50;
+        clas.className = [NSString stringWithFormat:@"%ld年级 %ld班",year,ca];
+        clas.classNumber = [NSString stringWithFormat:@"%u",arc4random()%120];
+        [presen.classs addObject:clas];
         //自定义数据库名字和路径
         NSString * path = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)lastObject];
         NSString * pathName = [path stringByAppendingString:@"/realmTest.realm"];
@@ -192,8 +196,10 @@
 //        NSLog(@"------ %@ %@ %ld",pres.name,pres.adress,pres.age);
     }
     //断言查询多个数据条件
-    NSPredicate * pres = [NSPredicate predicateWithFormat:@"ANY dogs.sex = %ld AND dogs.name = '%@'",1,@"dog_3"];
-    RLMResults * resPres = [SYPreson objectsInRealm:realm withPredicate:pres];
+    NSPredicate * pres = [NSPredicate predicateWithFormat:@"adress = %@",@"秦朝"];
+    NSPredicate * presN = [NSPredicate predicateWithFormat:@"ANY dogs.name = %@",@"dog_3"];
+    //链式查询，
+    RLMResults * resPres = [[SYPreson objectsInRealm:realm withPredicate:pres] objectsWithPredicate:presN];
     for (SYPreson * pr in resPres) {
         NSLog(@"------ %@ %@ %ld",pr.name,pr.adress,pr.age);
     }
@@ -218,6 +224,10 @@
 //        [realm deleteObject:per.lastObject];
         //一次性删除一个数组的数据
         [realm deleteObjects:per];
+    }];
+    RLMResults * dogs = [SYDog allObjectsInRealm:realm];
+    [realm transactionWithBlock:^{
+        [realm deleteObjects:dogs];
     }];
 }
 //修改数据库

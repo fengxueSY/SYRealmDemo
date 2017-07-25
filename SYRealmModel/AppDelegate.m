@@ -16,7 +16,24 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    
+    //获取数据库路径
+    NSString * path = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)lastObject];
+    NSString * pathName = [path stringByAppendingString:@"/realmTest.realm"];
+    
+    RLMRealmConfiguration * config = [RLMRealmConfiguration defaultConfiguration];
+    //最新版本，每次更新，都要在上次的基础上加一，不能低于之前的版本
+    config.schemaVersion = 3;
+    //配置新路径
+    config.fileURL = [NSURL URLWithString:pathName];
+    config.migrationBlock = ^(RLMMigration * _Nonnull migration, uint64_t oldSchemaVersion) {
+        if (oldSchemaVersion < 3) {
+            NSLog(@"进行数据迁移");
+        }else{
+            NSLog(@"不进行数据迁移");
+        }
+    };
+    [RLMRealmConfiguration setDefaultConfiguration:config];
     return YES;
 }
 
